@@ -1,6 +1,8 @@
 import pandas as pd
 from abc import ABC , abstractmethod
+import pymongo.mongo_client
 from sqlalchemy import create_engine ,text
+import pymongo
 
 
 class DatabaseHandler(ABC):
@@ -22,17 +24,7 @@ class DatabaseHandler(ABC):
         self.database = config['database']
         self.conn = None
     
-    @abstractmethod
-    def execute(self,query:str):
-        """s
-        executes a given query for choosen database handler instance and returns output
-
-        Args:
-            query : str
-        Output:
-            any
-        """
-    
+   
     @abstractmethod
     def frame_to_database(self, frame: pd.DataFrame, name:str ) -> None:
         """
@@ -163,6 +155,74 @@ class MongoDatabaseHandler(DatabaseHandler):
     def __init__(self, config: dict) -> None:
         super().__init__(config)
 
-        self.conn = self.user
+        self.conn = pymongo.MongoClient(f"mongodb://{self.user}:{self.password}@{self.host}:27017/")
+        self.conn = self.conn[self.database]
+
+
+    def get_db_connection(self):
+        """
+        Returns a MongoDB connection to given database
+        """
+        try:
+            return self.conn
+        except Exception as e:
+            raise e
+
+
+    def load_from_database(self,name:str,) -> pd.DataFrame:
+        """
+        This function loads dataset from givem database into pd.Dataframe
+
+        Args:
+            name = 'traindata'|'testdata'
+
+        return : Dataframe
+        """
+        try:
+        
+            #TODO implementatioin pending
+            pass
+        
+        except Exception as e:
+            raise e
+        
+    def frame_to_database(self, frame: pd.DataFrame, name:str ) -> None:
+        """
+        loads data to 'Train_Data' or 'Test_Data' tables specify name accordingly
+
+        Args:
+            frame : Dataframe to load
+            name : 'traindata' | 'testdata' collection name
+
+        Output : None
+        """
+        try:
+            records = []
+            for i in range(frame.shape[0]):
+                records.append({'headline':frame.iloc[i]['headline'],'label':frame.iloc[i]['label']})
+            
+            self.conn[name].insert_many(records)
+        
+        except Exception as e:
+            raise e
+
+    def add_to_database(self, headline: str, outcome: bool, name:str) -> None:
+        """
+        loads single record to 'Train_Data' or 'Test_Data' tables specify name accordingly
+
+        Args:
+            headline : news headline
+            outcome : actual or predicted outcome
+            name (Collection Name) : 'traindata' | 'testdata' | 'infer_data'
+
+        Output : None
+        """
+        try:
+
+            #TODO implementatioin pending
+            pass
+        
+        except Exception as e:
+            raise e
 
     
