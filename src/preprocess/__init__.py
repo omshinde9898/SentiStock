@@ -1,5 +1,6 @@
 from abc import ABC , abstractmethod
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.preprocessing import LabelEncoder
 import nltk
 from nltk.tokenize import word_tokenize , sent_tokenize
 from nltk.corpus import stopwords
@@ -66,6 +67,45 @@ class CountVectTransformer(PreprocessStep):
         """
         try:
             data = self.vectorizer.transform(data)
+        except Exception as e:
+            raise e
+        
+        return data
+
+
+class LabelTransformer(PreprocessStep):
+    def __init__(self) -> None:
+        """
+        PreprocessStep Implemented to include LabelEncoder into preproccesing steps for categorical data
+        """
+        
+        super().__init__()
+        
+        self.encoder = LabelEncoder()
+
+    def fit_transform(self, data:list ) -> list:
+        """
+        trains a count vectorizer on given data and return transformed data 
+        """
+        try:
+            data = self.encoder.fit_transform(data)
+        except Exception as e:
+            raise e
+        
+        return data
+        
+
+    def transform(self,data:list) -> list:
+        """
+        Returns transformed sequences of given data
+
+        Args:
+            data : list of sentences
+
+        output: list
+        """
+        try:
+            data = self.encoder.transform(data)
         except Exception as e:
             raise e
         

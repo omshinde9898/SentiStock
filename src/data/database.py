@@ -32,7 +32,7 @@ class DatabaseHandler(ABC):
         """
 
     @abstractmethod
-    def load_from_database(self) -> pd.DataFrame:
+    def load_from_database(self, name : str) -> pd.DataFrame:
         """
         loads data from database instance to pandas Dataframe
         """
