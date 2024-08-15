@@ -2,6 +2,7 @@ from abc import ABC , abstractmethod
 from sklearn.tree import DecisionTreeClassifier as DT
 from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score
 import pickle
+import os
 from src import logger
 
 class ClassifierModel(ABC):
@@ -39,13 +40,13 @@ class ClassifierModel(ABC):
 
 
 class DecisionTreeClassifier(ClassifierModel):
-    def __init__(self,filepath : str = None) -> None:
+    def __init__(self,filepath : str) -> None:
         """
         """
 
         self.model = None
         self.accuracy = None
-        self.filepath = None
+        self.filepath = filepath
 
         # TODO : Create function to update model parameters
         # self.params = {
@@ -71,8 +72,7 @@ class DecisionTreeClassifier(ClassifierModel):
         # )
         
 
-        if filepath :
-            self.filepath = filepath
+        if os.path.exists(filepath) :
             with open(filepath, 'rb') as file:
                 logger.info(f"Loading model file from : {filepath}")
 
@@ -107,12 +107,9 @@ class DecisionTreeClassifier(ClassifierModel):
             raise e
 
         if save:
-            if self.filepath == None:
-                raise Exception('Filepath Not given while instantiating')
-            else:
-                with open(self.filepath, 'wb') as file:
-                    logger.info(f"Saving model file on path : {self.filepath}")
-                    pickle.dump(self.model, file)
+            with open(self.filepath, 'wb') as file:
+                logger.info(f"Saving model file on path : {self.filepath}")
+                pickle.dump(self.model, file)
         
         return hist
     
@@ -130,9 +127,9 @@ class DecisionTreeClassifier(ClassifierModel):
         logger.info(f"Model evaluation has initiated")
         y_pred = self.model.predict(x_test)
         accuracy_scored = accuracy_score(y_test,y_pred)
-        precision_scored = precision_score(y_test,y_pred)
-        recall_scored = recall_score(y_test,y_pred)
-        f1_scored = f1_score(y_test,y_pred)
+        precision_scored = precision_score(y_test,y_pred,average='weighted')
+        recall_scored = recall_score(y_test,y_pred,average='weighted')
+        f1_scored = f1_score(y_test,y_pred,average='weighted')
 
         logger.info(f"Model evaluation complete with accuracy : {accuracy_scored}")
         self.accuracy = accuracy_scored
@@ -170,4 +167,7 @@ class DecisionTreeClassifier(ClassifierModel):
         """
         logger.info(f"Running inference for multiple headlines")
         return self.model.predict(headlines)
+    
+    def get_params(self):
+        return self.model.get_params()
     

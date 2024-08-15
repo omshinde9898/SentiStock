@@ -1,0 +1,6 @@
+DATABASE_TYPE : PostgresSQL
+
+HOST: 172.17.0.1
+USER: postgres
+PASSWORD: hello
+DATABASE: sentistock

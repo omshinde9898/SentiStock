@@ -26,11 +26,11 @@ class TrainingPipeline(Pipeline):
     def __init__(
             self,
             db_config: dict,
+            model_filepath: str,
             d_handler: DatabaseHandler = PostgreSqlDatabaseHandler, 
             x_steps: list[PreprocessStep] = [CountVectTransformer],
             y_steps: list[PreprocessStep] = [LabelTransformer],
             classifier: ClassifierModel = DecisionTreeClassifier,
-            model_filepath: str = None,
         ) -> None:
         """
         """
@@ -52,7 +52,7 @@ class TrainingPipeline(Pipeline):
             logger.info(f"Executing trainig pipeling with {i.__class__.__name__} for labels")
             y = i.fit_transform(y)
         
-        return self.classifier.train_model(X,y,save=False)
+        return self.classifier.train_model(X,y,save=True)
 
 
 
@@ -60,18 +60,18 @@ class EvaluationPipeline(Pipeline):
 
     def __init__(
             self,
-            config: dict,
+            db_config: dict,
+            model_filepath: str,
             d_handler: DatabaseHandler = PostgreSqlDatabaseHandler, 
             x_steps: list[PreprocessStep] = [CountVectTransformer],
             y_steps: list[PreprocessStep] = [LabelTransformer],
             classifier: ClassifierModel = DecisionTreeClassifier,
-            model_filepath: str = None,
         ) -> None:
         """
         """
         logger.info(f"Initiating evaluation pipeline for model : {classifier.__name__} and {d_handler.__name__}")
-        self.data_handler = d_handler(config)
-        self.steps_on_x = [i() for i in x_steps]
+        self.data_handler = d_handler(db_config)
+        self.steps_on_x = x_steps
         self.steps_on_y = [i() for i in y_steps]
         self.classifier = classifier(model_filepath)
 
@@ -82,10 +82,10 @@ class EvaluationPipeline(Pipeline):
         y = data['label']
         for i in self.steps_on_x:
             logger.info(f"Executing evaluation pipeling with {i.__class__.__name__} for features")
-            X = i.fit_transform(X)
+            X = i().transform(X)
         for i in self.steps_on_y:
             logger.info(f"Executing evaluation pipeling with {i.__class__.__name__} for features")
-            y = i.fit_transform(y)
+            y = i.transform(y)
 
         try:
             logger.info(f"Executing evaluation pipeling with MLFlow experiment tracking")
