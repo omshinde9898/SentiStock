@@ -1,5 +1,5 @@
 from abc import ABC , abstractmethod
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeClassifier as DT
 from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score
 import pickle
 
@@ -46,10 +46,36 @@ class DecisionTreeClassifier(ClassifierModel):
         self.accuracy = None
         self.filepath = None
 
+        # TODO : Create function to update model parameters
+        # self.params = {
+        #     'criterion':'gini',
+        #     'splitter': 'best',
+
+        # }
+
+        # class DT(
+        #     *,
+        #     criterion: Literal['gini', 'entropy', 'log_loss'] = "gini",
+        #     splitter: Literal['best', 'random'] = "best",
+        #     max_depth: Int | None = None,
+        #     min_samples_split: float | int = 2,
+        #     min_samples_leaf: float | int = 1,
+        #     min_weight_fraction_leaf: Float = 0,
+        #     max_features: float | int | Literal['auto', 'sqrt', 'log2'] | None = None,
+        #     random_state: Int | RandomState | None = None,
+        #     max_leaf_nodes: Int | None = None,
+        #     min_impurity_decrease: Float = 0,
+        #     class_weight: Mapping | str | Sequence[Mapping] | None = None,
+        #     ccp_alpha: float = 0
+        # )
+        
+
         if filepath :
             self.filepath = filepath
             with open(filepath, 'rb') as file:
                 self.model = pickle.load(file)
+        else:
+            self.model = DT()
 
 
     def train_model(self,x_train, y_train ,save:bool = True):
