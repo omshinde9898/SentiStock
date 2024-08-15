@@ -2,6 +2,7 @@ from abc import ABC , abstractmethod
 from sklearn.tree import DecisionTreeClassifier as DT
 from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score
 import pickle
+from src import logger
 
 class ClassifierModel(ABC):
     """
@@ -73,8 +74,12 @@ class DecisionTreeClassifier(ClassifierModel):
         if filepath :
             self.filepath = filepath
             with open(filepath, 'rb') as file:
+                logger.info(f"Loading model file from : {filepath}")
+
+                # TODO : Implement exception handling for wrong filepath
                 self.model = pickle.load(file)
         else:
+            logger.info(f"Using untrained model, filepath not provided")
             self.model = DT()
 
 
@@ -90,14 +95,23 @@ class DecisionTreeClassifier(ClassifierModel):
         output : model history
 
         """
-        
-        hist = self.model.fit(x_train , y_train)
+        try:
+            
+            logger.info("Training of classifier model has started!")        
+            hist = self.model.fit(x_train , y_train)    
+            logger.info("Training of classifier model has Finished!")
+
+        except Exception as e:
+            
+            logger.error(f"Cannot train classifier model")
+            raise e
 
         if save:
             if self.filepath == None:
                 raise Exception('Filepath Not given while instantiating')
             else:
                 with open(self.filepath, 'wb') as file:
+                    logger.info(f"Saving model file on path : {self.filepath}")
                     pickle.dump(self.model, file)
         
         return hist
@@ -113,12 +127,14 @@ class DecisionTreeClassifier(ClassifierModel):
         output : (accuracy , precision , recall, f1 score)
         """
         
+        logger.info(f"Model evaluation has initiated")
         y_pred = self.model.predict(x_test)
         accuracy_scored = accuracy_score(y_test,y_pred)
         precision_scored = precision_score(y_test,y_pred)
         recall_scored = recall_score(y_test,y_pred)
         f1_scored = f1_score(y_test,y_pred)
 
+        logger.info(f"Model evaluation complete with accuracy : {accuracy_scored}")
         self.accuracy = accuracy_scored
         print(accuracy_scored)
         print(precision_scored)
@@ -137,6 +153,7 @@ class DecisionTreeClassifier(ClassifierModel):
 
         output : predicted label
         """
+        logger.info(f"Running inference for headline : {headline}")
         headline = [headline]
 
         return self.model.predict(headline)
@@ -151,5 +168,6 @@ class DecisionTreeClassifier(ClassifierModel):
 
         output : list[ predicted labels ]
         """
+        logger.info(f"Running inference for multiple headlines")
         return self.model.predict(headlines)
     

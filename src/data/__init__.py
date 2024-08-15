@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 from pathlib import Path
-import logging
+from src import logger
 
 def read_csv_headlines(paths : list[str]) -> pd.DataFrame:
     """
@@ -17,7 +17,7 @@ def read_csv_headlines(paths : list[str]) -> pd.DataFrame:
         data = pd.DataFrame(columns=['headline','label'])
 
         for path in paths:
-
+            logger.info(f"reading csv file from {path}")
             # read csv file into dataframe
             frame = pd.read_csv(Path(path))
 
@@ -27,8 +27,10 @@ def read_csv_headlines(paths : list[str]) -> pd.DataFrame:
             data = pd.concat([data,frame],axis=0,ignore_index=True)
         
         # return final dataframe
+        logger.info("Returned data frame from csv files")
         return data
     
     except Exception as e:
+        logger.error(f'Read csv headlines failedw ith{e}')
         raise e
     

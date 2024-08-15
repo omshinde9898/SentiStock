@@ -3,6 +3,7 @@ from abc import ABC , abstractmethod
 import pymongo.mongo_client
 from sqlalchemy import create_engine ,text
 import pymongo
+from src import logger
 
 
 class DatabaseHandler(ABC):
@@ -66,6 +67,7 @@ class PostgreSqlDatabaseHandler(DatabaseHandler):
         super().__init__(config)
 
         self.conn = create_engine(f"postgresql://{self.user}:{self.password}@{self.host}:5432/{self.database}")
+        logger.info(f"Using PostgreSQL Database handler on host : {config['host']}")
 
     def execute(self, query: str) -> list:
         """
@@ -94,10 +96,12 @@ class PostgreSqlDatabaseHandler(DatabaseHandler):
         return : Dataframe
         """
         try:
-        
+            logger.info(f"Requesting data from databse table : {table_name}")
+
             return pd.read_sql_table(table_name=table_name,con=self.conn).drop(['index'],axis=1)
         
         except Exception as e:
+            logger.error(f"Failed to load data from database table: {table_name}")
             raise e
         
     def frame_to_database(self, frame: pd.DataFrame, name:str ) -> None:
@@ -111,10 +115,11 @@ class PostgreSqlDatabaseHandler(DatabaseHandler):
         Output : None
         """
         try:
-
+            logger.info(f"Updating table : {name} with new dataframe")
             frame.to_sql(name, con=self.conn ,if_exists='replace')
         
         except Exception as e:
+            logger.error(f"Failed to update data on table : {name}")
             raise e
 
     def add_to_database(self, headline: str, outcome: bool, name:str) -> None:
@@ -132,9 +137,11 @@ class PostgreSqlDatabaseHandler(DatabaseHandler):
 
             fr = pd.DataFrame([[headline][outcome]] , columns=['headline','label'])
             
+            logger.info(f'Adding new data on table : {name}')
             fr.to_sql(con=self.conn, name=name, if_exists='append')
         
         except Exception as e:
+            logger.error(f"Failed to add new data on table : {name}")
             raise e
 
 

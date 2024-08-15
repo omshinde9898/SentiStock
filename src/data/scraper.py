@@ -2,6 +2,7 @@ import os
 from abc import ABC , abstractmethod
 import requests
 from bs4 import BeautifulSoup
+from src import logger
 
 class Scraper(ABC):
     """
@@ -33,8 +34,10 @@ class MC_Scraper(Scraper):
         return : list[str]
         """
         try:
+            logger.info(f"Requesting current headlines from : {self.url}")
             req = requests.get(self.url)
             if not req.ok:
+                logger.error(f"Failed to get current headlines : {req}")
                 raise Exception(f'Cannot reach web servers, error code : {req}')
         except Exception as e:
             raise e
