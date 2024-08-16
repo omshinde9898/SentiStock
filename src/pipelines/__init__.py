@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from abc import ABC , abstractmethod
 from src.data.database import DatabaseHandler , PostgreSqlDatabaseHandler
 from src.preprocess import PreprocessStep , CountVectTransformer ,LabelTransformer
@@ -104,13 +103,13 @@ class EvaluationPipeline(Pipeline):
                     'f1_score' : f1_scored
                 })
 
-            if not os.path.exists(log_path):
-                os.makedirs(log_path)
-        
-            logger.info(f"Experiment ran successfully saving model artifacts at : {log_path}")
-            mlflow.log_artifact(log_path)
+                if not os.path.exists(log_path):
+                    os.makedirs(log_path)
             
-            log_model(self.classifier,'model')
+                logger.info(f"Experiment ran successfully saving model artifacts at : {log_path}")
+                mlflow.log_artifact(log_path)
+                
+                log_model(self.classifier,'model')
 
         except Exception as e:
             logger.info(f"Failed experiment with MLFlow tracking")

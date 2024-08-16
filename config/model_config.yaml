@@ -1,2 +1,44 @@
-FILEPATH : models/latest.pkl
+FILEPATH : models/l1.pkl
 LOG_PATH : mlflow/
+
+
+###### THIS IS REFERENCE FOR SETTING DecisionTreeClassifier MODEL PARAMETERS ####################
+DecisionTreeClassifier:
+
+# criterion: Literal['gini', 'entropy', 'log_loss'] = "gini",
+  criterion: entropy
+
+# splitter: Literal['best', 'random'] = "best",
+  splitter: best
+
+# max_depth: Int | None = None,
+  max_depth: None
+
+# min_samples_split: float | int = 2,
+  min_samples_split: 2
+
+# min_samples_leaf: float | int = 1,
+  min_samples_leaf: 1
+
+# min_weight_fraction_leaf: Float = 0,
+  min_weight_fraction_leaf: 0
+
+# max_features: float | int | Literal['auto', 'sqrt', 'log2'] | None = None,
+  max_features: None
+
+# random_state: Int | RandomState | None = None,
+  random_state: None
+
+# max_leaf_nodes: Int | None = None,
+  max_leaf_nodes: None
+
+# min_impurity_decrease: Float = 0,
+  min_impurity_decrease: 0
+
+# class_weight: Mapping | str | Sequence[Mapping] | None = None,
+  class_weight: None
+
+# ccp_alpha: float = 0
+  ccp_alpha: 0
+
+################################################################################################

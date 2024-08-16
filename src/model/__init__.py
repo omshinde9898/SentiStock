@@ -3,7 +3,9 @@ from sklearn.tree import DecisionTreeClassifier as DT
 from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score
 import pickle
 import os
+from typing import Literal
 from src import logger
+from src.utils import read_yaml_config
 
 class ClassifierModel(ABC):
     """
@@ -46,31 +48,10 @@ class DecisionTreeClassifier(ClassifierModel):
 
         self.model = None
         self.accuracy = None
-        self.filepath = filepath
+        self.filepath = read_yaml_config('config/model_config.yaml')['FILEPATH']
 
         # TODO : Create function to update model parameters
-        # self.params = {
-        #     'criterion':'gini',
-        #     'splitter': 'best',
-
-        # }
-
-        # class DT(
-        #     *,
-        #     criterion: Literal['gini', 'entropy', 'log_loss'] = "gini",
-        #     splitter: Literal['best', 'random'] = "best",
-        #     max_depth: Int | None = None,
-        #     min_samples_split: float | int = 2,
-        #     min_samples_leaf: float | int = 1,
-        #     min_weight_fraction_leaf: Float = 0,
-        #     max_features: float | int | Literal['auto', 'sqrt', 'log2'] | None = None,
-        #     random_state: Int | RandomState | None = None,
-        #     max_leaf_nodes: Int | None = None,
-        #     min_impurity_decrease: Float = 0,
-        #     class_weight: Mapping | str | Sequence[Mapping] | None = None,
-        #     ccp_alpha: float = 0
-        # )
-        
+        self.params = read_yaml_config('config/model_config.yaml')['DecisionTreeClassifier']
 
         if os.path.exists(filepath) :
             with open(filepath, 'rb') as file:
@@ -80,7 +61,21 @@ class DecisionTreeClassifier(ClassifierModel):
                 self.model = pickle.load(file)
         else:
             logger.info(f"Using untrained model, filepath not provided")
-            self.model = DT()
+
+            self.model = DT(
+                criterion = self.params['criterion'],
+                splitter = self.params['splitter'],
+                max_depth = None if self.params['max_depth'] == 'None' else self.params['max_depth'],
+                min_samples_split = self.params['min_samples_split'],
+                min_samples_leaf = self.params['min_samples_leaf'],
+                min_weight_fraction_leaf = self.params['min_weight_fraction_leaf'],
+                max_features = None if self.params['max_features'] == 'None' else self.params['max_features'],
+                random_state = None if self.params['random_state'] == 'None' else self.params['random_state'],
+                max_leaf_nodes = None if self.params['max_leaf_nodes'] == 'None' else self.params['max_leaf_nodes'],
+                min_impurity_decrease = self.params['min_impurity_decrease'],
+                class_weight = None if self.params['class_weight'] == 'None' else self.params['class_weight'],
+                ccp_alpha = self.params['ccp_alpha'],
+            )
 
 
     def train_model(self,x_train, y_train ,save:bool = True):
