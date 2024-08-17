@@ -124,7 +124,7 @@ class InferencePipeline(Pipeline):
         ) -> None:
         """
         """
-        logger.info(f"Initiating evaluation pipeline for model : {classifier.__name__} and {d_handler.__name__}")
+        logger.info(f"Initiating inference pipeline for model : {classifier.__name__} and {d_handler.__name__}")
         self.data_handler = d_handler()
         self.steps_on_x = x_steps
         self.steps_on_y = [i() for i in y_steps]
@@ -138,15 +138,16 @@ class InferencePipeline(Pipeline):
         for i in self.steps_on_x:
             logger.info(f"Executing inference pipeline with {i.__class__.__name__} for features")
             X = i().transform(X)
-        # for i in self.steps_on_y:
-        #     logger.info(f"Executing evaluation pipeling with {i.__class__.__name__} for features")
-        #     y = i.transform(y)
 
         try:
             logger.info(f"Executing inference pipeline with classifier : {self.classifier.__class__.__name__}")
             preds = self.classifier.predict_onFrame(X)
-            return preds
+
+            for i in self.steps_on_y:
+                logger.info(f"Executing inference pipeling with {i.__class__.__name__} for features")
+                y = i.inverse_transform(preds)
+            return y
 
         except Exception as e:
-            logger.info(f"Failed experiment with MLFlow tracking")
+            logger.info(f"Inference pipeline failed to execute")
             raise e

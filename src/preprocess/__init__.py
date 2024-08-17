@@ -37,6 +37,17 @@ class PreprocessStep(ABC):
         
         output : transformed list
         """
+    
+    @abstractmethod
+    def inverse_transform(self, data:list ) -> list:
+        """
+        Abstract function which on implementation should return transformed data wrt trained instance
+
+        Args:
+            data: list
+        
+        output : transformed list
+        """
 
 
 class CountVectTransformer(PreprocessStep):
@@ -112,6 +123,28 @@ class CountVectTransformer(PreprocessStep):
         return data
 
 
+    def inverse_transform(self,data:list) -> list:
+        """
+        Returns transformed sequences of given data
+
+        Args:
+            data : list of sentences
+
+        output: list
+        """
+        try:
+            logger.info(f"Reading vectorizer binary from : {self.load_path}")
+            with open(self.load_path,'rb') as f:
+                self.vectorizer = pickle.load(f)
+
+            data = self.vectorizer.inverse_transform(data)
+        
+        except Exception as e:
+            raise e
+        
+        return data
+
+
 class LabelTransformer(PreprocessStep):
     def __init__(self,save : bool = True) -> None:
         """
@@ -168,6 +201,27 @@ class LabelTransformer(PreprocessStep):
         
         return data
 
+    def inverse_transform(self,data:list) -> list:
+        """
+        Returns transformed sequences of given data
+
+        Args:
+            data : list of sentences
+
+        output: list
+        """
+        try:
+
+            logger.info(f"Reading encoder binary from : {self.load_path}")
+            with open(self.load_path,'rb') as f:
+                self.encoder = pickle.load(f)
+
+            data = self.encoder.inverse_transform(data)
+        except Exception as e:
+            raise e
+        
+        return data
+
 
 class TokenTransformer(PreprocessStep):
     def __init__(self,level:Literal['word','sentence']) -> None:
@@ -202,3 +256,6 @@ class TokenTransformer(PreprocessStep):
             raise e
         
         return data
+    
+    def inverse_transform(self, data: list) -> list:
+        raise NotImplementedError

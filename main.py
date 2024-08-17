@@ -41,9 +41,9 @@ if __name__ == "__main__":
             model_config = read_yaml_config('config/model_config.yaml')
             pipeline = InferencePipeline()
             try:
-                pipeline.run_pipeline(
+                print(pipeline.run_pipeline(
                     data = MC_Scraper().get_headlines()
-                )
+                ))
             except Exception as e:
                 raise e
      
