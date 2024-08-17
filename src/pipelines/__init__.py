@@ -111,3 +111,42 @@ class EvaluationPipeline(Pipeline):
             logger.info(f"Failed experiment with MLFlow tracking")
             raise e
 
+
+
+class InferencePipeline(Pipeline):
+
+    def __init__(
+            self,
+            d_handler: DatabaseHandler = PostgreSqlDatabaseHandler, 
+            x_steps: list[PreprocessStep] = [CountVectTransformer],
+            y_steps: list[PreprocessStep] = [LabelTransformer],
+            classifier: ClassifierModel = DecisionTreeClassifier,
+        ) -> None:
+        """
+        """
+        logger.info(f"Initiating evaluation pipeline for model : {classifier.__name__} and {d_handler.__name__}")
+        self.data_handler = d_handler()
+        self.steps_on_x = x_steps
+        self.steps_on_y = [i() for i in y_steps]
+        self.classifier = classifier()
+
+    def run_pipeline(self,data : list[str]) -> None:
+        logger.info(f"Executing inference pipeline with {self.data_handler.__class__.__name__}")
+        
+        X = data
+
+        for i in self.steps_on_x:
+            logger.info(f"Executing inference pipeline with {i.__class__.__name__} for features")
+            X = i().transform(X)
+        # for i in self.steps_on_y:
+        #     logger.info(f"Executing evaluation pipeling with {i.__class__.__name__} for features")
+        #     y = i.transform(y)
+
+        try:
+            logger.info(f"Executing inference pipeline with classifier : {self.classifier.__class__.__name__}")
+            preds = self.classifier.predict_onFrame(X)
+            return preds
+
+        except Exception as e:
+            logger.info(f"Failed experiment with MLFlow tracking")
+            raise e

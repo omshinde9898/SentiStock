@@ -1,5 +1,6 @@
-from src.pipelines import TrainingPipeline , EvaluationPipeline
+from src.pipelines import TrainingPipeline , EvaluationPipeline , InferencePipeline
 from src.utils import read_yaml_config
+from src.data.scraper import MC_Scraper
 import sys
     
 
@@ -10,6 +11,7 @@ def print_help():
     print('Run models with arguments as follow')
     print('`python main.py train`')
     print('`python main.py test`')
+    print('`python main.py infer`')
     print('`python main.py new`')
     print('use new for running experiment with untrained model ')
     print('--------------------------------------------------------------------------------------')
@@ -31,6 +33,16 @@ if __name__ == "__main__":
             try:
                 pipeline.run_pipeline(
                     log_path=model_config['LOG_PATH']
+                )
+            except Exception as e:
+                raise e
+        
+        if sys.argv[1] == 'infer':
+            model_config = read_yaml_config('config/model_config.yaml')
+            pipeline = InferencePipeline()
+            try:
+                pipeline.run_pipeline(
+                    data = MC_Scraper().get_headlines()
                 )
             except Exception as e:
                 raise e
