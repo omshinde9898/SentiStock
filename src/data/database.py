@@ -3,6 +3,7 @@ from abc import ABC , abstractmethod
 import pymongo.mongo_client
 from sqlalchemy import create_engine ,text
 import pymongo
+from src.utils import read_yaml_config
 from src import logger
 
 
@@ -64,10 +65,12 @@ class PostgreSqlDatabaseHandler(DatabaseHandler):
 
         return PostgreSqlDatabaseHandler
         """
-        super().__init__(config)
+        super().__init__(
+            read_yaml_config('config/database_config.yaml')['PostgresConfig']
+        )
 
         self.conn = create_engine(f"postgresql://{self.user}:{self.password}@{self.host}:5432/{self.database}")
-        logger.info(f"Using PostgreSQL Database handler on host : {config['host']}")
+        logger.info(f"Using PostgreSQL Database handler on host : {self.host}")
 
     def execute(self, query: str) -> list:
         """
