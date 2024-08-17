@@ -42,7 +42,7 @@ class ClassifierModel(ABC):
 
 
 class DecisionTreeClassifier(ClassifierModel):
-    def __init__(self,filepath : str) -> None:
+    def __init__(self) -> None:
         """
         """
 
@@ -53,9 +53,9 @@ class DecisionTreeClassifier(ClassifierModel):
         # TODO : Create function to update model parameters
         self.params = read_yaml_config('config/model_config.yaml')['DecisionTreeClassifier']
 
-        if os.path.exists(filepath) :
-            with open(filepath, 'rb') as file:
-                logger.info(f"Loading model file from : {filepath}")
+        if os.path.exists(self.filepath) :
+            with open(self.filepath, 'rb') as file:
+                logger.info(f"Loading model file from : {self.filepath}")
 
                 # TODO : Implement exception handling for wrong filepath
                 self.model = pickle.load(file)

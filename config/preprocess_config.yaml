@@ -1,0 +1,56 @@
+
+############ Count Vectorize Config ######################################################
+CountVectTransformer:
+
+  # input: Literal['filename', 'file', 'content'] = "content",
+  input: content
+
+  # encoding: str = "utf-8",
+  encoding: utf-8
+  
+  # decode_error: Literal['strict', 'ignore', 'replace'] = "strict",
+  decode_error: strict
+  
+  # strip_accents: ((...) -> Any) | Literal['ascii', 'unicode'] | None = None,
+  strip_accents: None
+  
+  # lowercase: bool = True
+  lowercase: True
+  
+  # preprocessor: ((...) -> Any) | None = None,
+  preprocessor: None
+  
+  # tokenizer: ((...) -> Any) | None = None,
+  tokenizer: None
+  
+  # stop_words: ArrayLike | None = None,
+  stop_words: english
+  
+  # token_pattern: str | None = r"(?u)\b\w\w+\b",
+  token_pattern: (?u)\b\w\w+\b
+  
+  # ngram_range: tuple[float, float] = ...,
+  
+  
+  # analyzer: ((...) -> Any) | Literal['word', 'char', 'char_wb'] = "word",
+  analyzer: word
+  
+  # max_df: float | int = 1,
+  max_df: 1
+  
+  # min_df: float | int = 1,
+  min_df: 1
+  
+  # max_features: Int | None = None,
+  max_features: None
+  
+  # vocabulary: Iterable | Mapping | None = None,
+  vocabulary: None
+  
+  # binary: bool = False,
+  binary: False
+  
+  # dtype: ... = ...
+
+
+##########################################################################################

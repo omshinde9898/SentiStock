@@ -9,6 +9,7 @@ from nltk.tokenize import word_tokenize , sent_tokenize
 from nltk.corpus import stopwords
 from typing import Literal
 from src import logger
+from src.utils import read_yaml_config
 
 class PreprocessStep(ABC):
     """
@@ -49,13 +50,30 @@ class CountVectTransformer(PreprocessStep):
         self.vectorizer = None
         self.save = save
         self.load_path = 'artifacts/CountVectTransformer/latest.pkl'
+        self.config = read_yaml_config('config/preprocess_config.yaml')['CountVectTransformer']
 
     def fit_transform(self, data:list ) -> list:
         """
         trains a count vectorizer on given data and return transformed data 
         """
         try:
-            self.vectorizer = CountVectorizer(lowercase=True,stop_words="english")
+            self.vectorizer = CountVectorizer(
+                input = self.config['input'],
+                encoding = self.config['encoding'],
+                decode_error = self.config['decode_error'],
+                strip_accents = None if self.config['strip_accents'] == 'None' else self.config['strip_accents'],
+                lowercase = self.config['lowercase'],
+                preprocessor = None if self.config['preprocessor'] == 'None' else self.config['preprocessor'],
+                tokenizer = None if self.config['tokenizer'] == 'None' else self.config['tokenizer'],
+                stop_words = self.config['stop_words'],
+                token_pattern = None if self.config['token_pattern'] == 'None' else self.config['token_pattern'],
+                analyzer = self.config['analyzer'],
+                max_df = self.config['max_df'],
+                min_df = self.config['min_df'],
+                max_features = None if self.config['max_features'] == 'None' else self.config['max_features'],
+                vocabulary = None if self.config['vocabulary'] == 'None' else self.config['vocabulary'],
+                binary = self.config['binary'],
+            )
             data = self.vectorizer.fit_transform(data)
 
             if self.save:

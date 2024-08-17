@@ -24,8 +24,6 @@ class TrainingPipeline(Pipeline):
 
     def __init__(
             self,
-            db_config: dict,
-            model_filepath: str,
             d_handler: DatabaseHandler = PostgreSqlDatabaseHandler, 
             x_steps: list[PreprocessStep] = [CountVectTransformer],
             y_steps: list[PreprocessStep] = [LabelTransformer],
@@ -34,10 +32,10 @@ class TrainingPipeline(Pipeline):
         """
         """
         logger.info(f"Initiating training pipeline for model : {classifier.__name__} and {d_handler.__name__}")
-        self.data_handler = d_handler(db_config)
+        self.data_handler = d_handler()
         self.steps_on_x = [i() for i in x_steps]
         self.steps_on_y = [i() for i in y_steps]
-        self.classifier = classifier(model_filepath)
+        self.classifier = classifier()
 
     def run_pipeline(self) -> None:
         logger.info(f"Executing trainig pipeling with {self.data_handler.__class__.__name__}")
@@ -59,8 +57,6 @@ class EvaluationPipeline(Pipeline):
 
     def __init__(
             self,
-            db_config: dict,
-            model_filepath: str,
             d_handler: DatabaseHandler = PostgreSqlDatabaseHandler, 
             x_steps: list[PreprocessStep] = [CountVectTransformer],
             y_steps: list[PreprocessStep] = [LabelTransformer],
@@ -69,10 +65,10 @@ class EvaluationPipeline(Pipeline):
         """
         """
         logger.info(f"Initiating evaluation pipeline for model : {classifier.__name__} and {d_handler.__name__}")
-        self.data_handler = d_handler(db_config)
+        self.data_handler = d_handler()
         self.steps_on_x = x_steps
         self.steps_on_y = [i() for i in y_steps]
-        self.classifier = classifier(model_filepath)
+        self.classifier = classifier()
 
     def run_pipeline(self,log_path) -> None:
         logger.info(f"Executing evaluation pipeling with {self.data_handler.__class__.__name__}")

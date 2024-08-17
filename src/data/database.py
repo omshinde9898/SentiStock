@@ -51,7 +51,7 @@ class PostgreSqlDatabaseHandler(DatabaseHandler):
     This class handles all procedures related to SQL database 
     """
 
-    def __init__(self, config: dict) -> None:
+    def __init__(self) -> None:
         """
         To create SQL Database Instance and setup a connection with remote database
 
