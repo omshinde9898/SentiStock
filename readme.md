@@ -10,6 +10,11 @@ SentiStock is a python based machine learning project to get latest stock market
 
 ## Run Project
 
+```bash
+git clone https://github.com/omshinde9898/SentiStock.git
+```
+
+
 #### Install Dependencies
 
 **Common**
@@ -21,7 +26,7 @@ pip install -r requirements.txt
 
 #### Run Streamlit GUI
 ```bash
-streamlit app.py
+streamlit run app.py
 ```
 
 #### Run CLI
@@ -29,6 +34,6 @@ streamlit app.py
 python main.py
 ```
 
-## Datasets Used
+<!-- ## Datasets Used
 
-- 
+-  -->
